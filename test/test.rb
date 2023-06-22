@@ -124,7 +124,7 @@ class WooCommerceAPITest < Minitest::Test
     response = @basic_auth.delete "products/1234?force=true"
 
     assert_equal 202, response.code
-    assert_equal '{"message":"Permanently deleted product"}', response.to_json
+    assert_equal '{"message":"Permanently deleted product"}', response.parsed_response.to_json
   end
 
   def test_basic_auth_delete_params
@@ -137,7 +137,7 @@ class WooCommerceAPITest < Minitest::Test
     response = @basic_auth.delete "products/1234", force: true
 
     assert_equal 202, response.code
-    assert_equal '{"message":"Permanently deleted product"}', response.to_json
+    assert_equal '{"message":"Permanently deleted product"}', response.parsed_response.to_json
   end
 
   def test_oauth_put
@@ -150,12 +150,12 @@ class WooCommerceAPITest < Minitest::Test
     response = @oauth.delete "products/1234?force=true"
 
     assert_equal 202, response.code
-    assert_equal '{"message":"Permanently deleted product"}', response.to_json
+    assert_equal '{"message":"Permanently deleted product"}', response.parsed_response.to_json
   end
 
   def test_adding_query_params
     url = @oauth.send(:add_query_params, 'foo.com', filter: { sku: '123' }, order: 'created_at')
-    assert_equal url, URI.encode('foo.com?filter[sku]=123&order=created_at')
+    assert_equal url, URI::Parser.new.escape('foo.com?filter[sku]=123&order=created_at')
   end
 
   def test_invalid_signature_method
